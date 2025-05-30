@@ -58,10 +58,12 @@ fn test_initialize_mystate() {
         AccountMeta::new_readonly(system_program, false),
     ];
 
+    let data = [1; 32];
+
     // Create the instruction data
     let ix_data = InitializeMyStateIxData {
         owner: *PAYER.as_array(),
-        data: [1; 32],
+        data,
     };
 
     // Ix discriminator = 0
@@ -81,8 +83,26 @@ fn test_initialize_mystate() {
         (system_program, system_account.clone()),
     ];
 
-    let init_res =
-        mollusk.process_and_validate_instruction(&instruction, tx_accounts, &[Check::success()]);
+    let expected_my_state = MyState {
+        is_initialized: true,
+        owner: *PAYER.as_array(),
+        state: State::Initialized,
+        data,
+        update_count: 0,
+    };
+
+    let expected_my_state_bytes = unsafe { to_bytes(&expected_my_state).to_vec() };
+
+    let init_res = mollusk.process_and_validate_instruction(
+        &instruction,
+        tx_accounts,
+        &[
+            Check::success(),
+            Check::account(&mystate_pda)
+                .data(&expected_my_state_bytes)
+                .build(),
+        ],
+    );
 
     assert!(init_res.program_result == ProgramResult::Success);
 }
@@ -115,6 +135,8 @@ fn test_update_mystate() {
 
     mystate_account.data = unsafe { to_bytes(&my_state).to_vec() };
 
+    let new_data = [5; 32];
+
     //Push the accounts in to the instruction_accounts vec!
     let ix_accounts = vec![
         AccountMeta::new(PAYER, true),
@@ -122,7 +144,7 @@ fn test_update_mystate() {
     ];
 
     // Create the instruction data
-    let ix_data = UpdateMyStateIxData { data: [1; 32] };
+    let ix_data = UpdateMyStateIxData { data: new_data };
 
     // Ix discriminator = 1
     let mut ser_ix_data = vec![1];
@@ -138,8 +160,16 @@ fn test_update_mystate() {
         (mystate_pda, mystate_account.clone()),
     ];
 
-    let update_res =
-        mollusk.process_and_validate_instruction(&instruction, tx_accounts, &[Check::success()]);
+    let update_res = mollusk.process_and_validate_instruction(
+        &instruction,
+        tx_accounts,
+        &[
+            Check::success(),
+            Check::account(&mystate_pda)
+                .data_slice(34, &new_data)
+                .build(),
+        ],
+    );
 
     assert!(update_res.program_result == ProgramResult::Success);
 }
