@@ -2,7 +2,7 @@ use pinocchio::{
     account_info::AccountInfo,
     instruction::{Seed, Signer},
     program_error::ProgramError,
-    pubkey::{self, Pubkey},
+    pubkey::Pubkey,
     sysvars::rent::Rent,
     ProgramResult,
 };
@@ -22,6 +22,7 @@ use crate::{
 pub struct InitializeMyStateIxData {
     pub owner: Pubkey,
     pub data: [u8; 32],
+    pub bump: u8,
 }
 
 impl DataLen for InitializeMyStateIxData {
@@ -49,19 +50,9 @@ pub fn process_initilaize_state(accounts: &[AccountInfo], data: &[u8]) -> Progra
         return Err(MyProgramError::InvalidOwner.into());
     }
 
-    let seed_without_bump = &[MyState::SEED.as_bytes(), &ix_data.owner];
+    let pda_bump_bytes = [ix_data.bump];
 
-    // When creating the PDA for the first time, we need to derive the bump on chain. There can be multiple bumps that can create a 
-    // valid PDA for the same seeds. But we use the first bump we come across. When the bump is passed from the client, it might not 
-    // be the highest possible bump. 
-    //
-    //Deriving the bump on chain ensures that we use the highest possible bump.
-    let (derived_my_state_pda, bump) = pubkey::find_program_address(seed_without_bump, &crate::ID);
-    if derived_my_state_pda != *state_acc.key() {
-        return Err(MyProgramError::PdaMismatch.into());
-    }
-
-    let pda_bump_bytes = &[bump];
+    MyState::validate_pda(ix_data.bump, state_acc.key(), &ix_data.owner)?;
 
     // Signer seeds
     let signer_seeds = [
