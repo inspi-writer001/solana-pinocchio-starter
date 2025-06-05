@@ -42,7 +42,7 @@ export const updateStateInstructionDiscriminator = 1
  */
 export function createUpdateStateInstruction(
   accounts: UpdateStateInstructionAccounts,
-  programId = new web3.PublicKey('4ibrEMW5F6hKnkW4jVedswYv6H6VtwPN6ar6dvXDN1nT')
+  programId = new web3.PublicKey('ENrRns55VechXJiq4bMbdx7idzQh7tvaEJoYeWxRNe7Y')
 ) {
   const [data] = UpdateStateStruct.serialize({
     instructionDiscriminator: updateStateInstructionDiscriminator,

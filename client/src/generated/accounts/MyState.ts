@@ -16,11 +16,12 @@ import { State, stateBeet } from '../types/State'
  * @category generated
  */
 export type MyStateArgs = {
-  isInitialized: boolean
+  isInitialized: number
   owner: web3.PublicKey
   state: State
   data: number[] /* size: 32 */
   updateCount: number
+  bump: number
 }
 /**
  * Holds the data for the {@link MyState} Account and provides de/serialization
@@ -31,11 +32,12 @@ export type MyStateArgs = {
  */
 export class MyState implements MyStateArgs {
   private constructor(
-    readonly isInitialized: boolean,
+    readonly isInitialized: number,
     readonly owner: web3.PublicKey,
     readonly state: State,
     readonly data: number[] /* size: 32 */,
-    readonly updateCount: number
+    readonly updateCount: number,
+    readonly bump: number
   ) {}
 
   /**
@@ -47,7 +49,8 @@ export class MyState implements MyStateArgs {
       args.owner,
       args.state,
       args.data,
-      args.updateCount
+      args.updateCount,
+      args.bump
     )
   }
 
@@ -91,7 +94,7 @@ export class MyState implements MyStateArgs {
    */
   static gpaBuilder(
     programId: web3.PublicKey = new web3.PublicKey(
-      '4ibrEMW5F6hKnkW4jVedswYv6H6VtwPN6ar6dvXDN1nT'
+      'ENrRns55VechXJiq4bMbdx7idzQh7tvaEJoYeWxRNe7Y'
     )
   ) {
     return beetSolana.GpaBuilder.fromStruct(programId, myStateBeet)
@@ -156,6 +159,7 @@ export class MyState implements MyStateArgs {
       state: 'State.' + State[this.state],
       data: this.data,
       updateCount: this.updateCount,
+      bump: this.bump,
     }
   }
 }
@@ -166,11 +170,12 @@ export class MyState implements MyStateArgs {
  */
 export const myStateBeet = new beet.BeetStruct<MyState, MyStateArgs>(
   [
-    ['isInitialized', beet.bool],
+    ['isInitialized', beet.u8],
     ['owner', beetSolana.publicKey],
     ['state', stateBeet],
     ['data', beet.uniformFixedSizeArray(beet.u8, 32)],
     ['updateCount', beet.u32],
+    ['bump', beet.u8],
   ],
   MyState.fromArgs,
   'MyState'

@@ -1,4 +1,4 @@
-use super::utils::{load_acc_mut_unchecked, DataLen, Initialized};
+use super::utils::{DataLen, Initialized};
 use pinocchio::{
     account_info::AccountInfo,
     program_error::ProgramError,
@@ -9,6 +9,7 @@ use pinocchio::{
 use crate::{
     error::MyProgramError,
     instruction::{InitializeMyStateIxData, UpdateMyStateIxData},
+    state::try_from_account_info_mut,
 };
 
 #[repr(u8)]
@@ -22,11 +23,12 @@ pub enum State {
 #[repr(C)] //keeps the struct layout the same across different architectures
 #[derive(Clone, Copy, Debug, PartialEq, shank::ShankAccount)]
 pub struct MyState {
-    pub is_initialized: bool,
+    pub is_initialized: u8,
     pub owner: Pubkey,
     pub state: State,
     pub data: [u8; 32],
     pub update_count: u32,
+    pub bump: u8,
 }
 
 impl DataLen for MyState {
@@ -35,7 +37,7 @@ impl DataLen for MyState {
 
 impl Initialized for MyState {
     fn is_initialized(&self) -> bool {
-        self.is_initialized
+        self.is_initialized > 0
     }
 }
 
@@ -55,14 +57,14 @@ impl MyState {
         my_stata_acc: &AccountInfo,
         ix_data: &InitializeMyStateIxData,
     ) -> ProgramResult {
-        let my_state =
-            unsafe { load_acc_mut_unchecked::<MyState>(my_stata_acc.borrow_mut_data_unchecked()) }?;
+        let my_state = unsafe { try_from_account_info_mut::<MyState>(my_stata_acc) }?;
 
         my_state.owner = ix_data.owner;
         my_state.state = State::Initialized;
         my_state.data = ix_data.data;
         my_state.update_count = 0;
-        my_state.is_initialized = true;
+        my_state.bump = ix_data.bump;
+        my_state.is_initialized = 1;
 
         Ok(())
     }

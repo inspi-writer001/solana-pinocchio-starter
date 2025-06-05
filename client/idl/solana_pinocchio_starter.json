@@ -86,7 +86,7 @@
         "fields": [
           {
             "name": "isInitialized",
-            "type": "bool"
+            "type": "u8"
           },
           {
             "name": "owner",
@@ -110,6 +110,10 @@
           {
             "name": "updateCount",
             "type": "u32"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -181,7 +185,7 @@
   ],
   "metadata": {
     "origin": "shank",
-    "address": "4ibrEMW5F6hKnkW4jVedswYv6H6VtwPN6ar6dvXDN1nT",
+    "address": "ENrRns55VechXJiq4bMbdx7idzQh7tvaEJoYeWxRNe7Y",
     "binaryVersion": "0.4.2",
     "libVersion": "0.4.2"
   }

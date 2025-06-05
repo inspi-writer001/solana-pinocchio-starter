@@ -3,8 +3,9 @@ use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramR
 use crate::{
     error::MyProgramError,
     state::{
-        utils::{load_acc_mut, load_ix_data, DataLen},
-        MyState,
+        try_from_account_info_mut,
+        utils::{load_ix_data, DataLen},
+        Initialized, MyState,
     },
 };
 
@@ -23,15 +24,19 @@ pub fn process_update_state(accounts: &[AccountInfo], data: &[u8]) -> ProgramRes
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    if unsafe { state_acc.owner() } != &crate::ID {
-        return Err(ProgramError::IllegalOwner);
-    }
-
     if !payer_acc.is_signer() {
         return Err(ProgramError::MissingRequiredSignature);
     }
 
-    let my_state = unsafe { load_acc_mut::<MyState>(state_acc.borrow_mut_data_unchecked())? };
+    let my_state = unsafe { try_from_account_info_mut::<MyState>(state_acc)? };
+
+    // CHECK if my_state is initialized
+    if !my_state.is_initialized() {
+        return Err(ProgramError::UninitializedAccount);
+    }
+
+    // Validate PDA
+    MyState::validate_pda(my_state.bump, state_acc.key(), payer_acc.key())?;
 
     if my_state.owner.ne(payer_acc.key()) {
         return Err(MyProgramError::InvalidOwner.into());

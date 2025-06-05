@@ -1,4 +1,4 @@
-use pinocchio::program_error::ProgramError;
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError};
 
 use crate::error::MyProgramError;
 
@@ -64,4 +64,32 @@ pub unsafe fn to_bytes<T: DataLen>(data: &T) -> &[u8] {
 
 pub unsafe fn to_mut_bytes<T: DataLen>(data: &mut T) -> &mut [u8] {
     core::slice::from_raw_parts_mut(data as *mut T as *mut u8, T::LEN)
+}
+
+pub unsafe fn try_from_account_info<T: DataLen>(acc: &AccountInfo) -> Result<&T, ProgramError> {
+    if acc.owner() != &crate::ID {
+        return Err(ProgramError::IllegalOwner);
+    }
+    let bytes = acc.try_borrow_data()?;
+
+    if bytes.len() != T::LEN {
+        return Err(ProgramError::InvalidAccountData);
+    }
+    Ok(&*(bytes.as_ptr() as *const T))
+}
+
+pub unsafe fn try_from_account_info_mut<T: DataLen>(
+    acc: &AccountInfo,
+) -> Result<&mut T, ProgramError> {
+    if acc.owner() != &crate::ID {
+        return Err(ProgramError::IllegalOwner);
+    }
+
+    let mut bytes = acc.try_borrow_mut_data()?;
+
+    if bytes.len() != T::LEN {
+        return Err(ProgramError::InvalidAccountData);
+    }
+
+    Ok(&mut *(bytes.as_mut_ptr() as *mut T))
 }

@@ -96,7 +96,7 @@ fn test_update_mystate() {
     let (system_program, _system_account) = program::keyed_account_for_system_program();
 
     // Create the PDA
-    let (mystate_pda, _bump) =
+    let (mystate_pda, bump) =
         Pubkey::find_program_address(&[MyState::SEED.as_bytes(), &PAYER.to_bytes()], &PROGRAM);
 
     //Initialize the accounts
@@ -107,11 +107,12 @@ fn test_update_mystate() {
     let mut mystate_account = Account::new(rent, MyState::LEN, &ID.into());
 
     let my_state = MyState {
-        is_initialized: true,
+        is_initialized: 1,
         owner: *PAYER.as_array(),
         state: State::Initialized,
         data: [1; 32],
         update_count: 0,
+        bump,
     };
 
     mystate_account.data = unsafe { to_bytes(&my_state).to_vec() };

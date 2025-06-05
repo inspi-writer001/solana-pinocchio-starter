@@ -5,14 +5,14 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as web3 from "@solana/web3.js";
-import * as beetSolana from "@metaplex-foundation/beet-solana";
-import * as beet from "@metaplex-foundation/beet";
+import * as web3 from '@solana/web3.js'
+import * as beetSolana from '@metaplex-foundation/beet-solana'
+import * as beet from '@metaplex-foundation/beet'
 export type InitializeMyStateIxData = {
-  owner: web3.PublicKey;
-  data: number[] /* size: 32 */;
-  bump: number;
-};
+  owner: web3.PublicKey
+  data: number[] /* size: 32 */
+  bump: number
+}
 
 /**
  * @category userTypes
@@ -21,9 +21,9 @@ export type InitializeMyStateIxData = {
 export const initializeMyStateIxDataBeet =
   new beet.BeetArgsStruct<InitializeMyStateIxData>(
     [
-      ["owner", beetSolana.publicKey],
-      ["data", beet.uniformFixedSizeArray(beet.u8, 32)],
-      ["bump", beet.u8],
+      ['owner', beetSolana.publicKey],
+      ['data', beet.uniformFixedSizeArray(beet.u8, 32)],
+      ['bump', beet.u8],
     ],
-    "InitializeMyStateIxData"
-  );
+    'InitializeMyStateIxData'
+  )

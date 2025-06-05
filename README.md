@@ -62,16 +62,14 @@ cargo test --features test-default
 cargo bench --features bench-default
 ```
 
-#### Compute Unit Benchmarks
+#### 2025-06-06 04:10:24.865734427 UTC
 
-#### 2025-04-07 06:27:51.301668567 UTC
+Solana CLI Version: solana-cli 2.1.21 (src:8a085eeb; feat:1416569292, client:Agave)
 
-Solana CLI Version: solana-cli 2.1.18 (src:f91c2fca; feat:3271415109, client:Agave)
-
-| Name              | CUs  | Delta   |
-| ----------------- | ---- | ------- |
-| InitializeMyState | 3375 | - new - |
-| UpdateMyState     | 215  | - new - |
+| Name              | CUs  | Delta  |
+| ----------------- | ---- | ------ |
+| InitializeMyState | 3297 | -1     |
+| UpdateMyState     | 1820 | +1,586 |
 
 ### 5. Client Generation
 
