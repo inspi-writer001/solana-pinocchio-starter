@@ -11,7 +11,6 @@ import * as beet from '@metaplex-foundation/beet'
 export type InitializeMyStateIxData = {
   owner: web3.PublicKey
   data: number[] /* size: 32 */
-  bump: number
 }
 
 /**
@@ -23,7 +22,6 @@ export const initializeMyStateIxDataBeet =
     [
       ['owner', beetSolana.publicKey],
       ['data', beet.uniformFixedSizeArray(beet.u8, 32)],
-      ['bump', beet.u8],
     ],
     'InitializeMyStateIxData'
   )
