@@ -26,11 +26,16 @@ fn process_instruction(
     match MyProgramInstruction::try_from(ix_disc)? {
         MyProgramInstruction::InitializeState => {
             msg!("Ix:0");
-            instruction::process_initilaize_state(accounts, instruction_data)
+            instruction::process_initialize_state_v1(accounts, instruction_data)?;
+            instruction::process_initialize_state_v2(accounts,instruction_data)?;
+            Ok(())
+
         }
         MyProgramInstruction::UpdateState => {
             msg!("Ix:1");
-            instruction::process_update_state(accounts, instruction_data)
+            instruction::process_update_state_v1(accounts, instruction_data)?;
+            instruction::process_update_state_v2(accounts, instruction_data)?;
+            Ok(())
         }
     }
 }
