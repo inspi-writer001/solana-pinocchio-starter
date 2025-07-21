@@ -73,17 +73,25 @@ Solana CLI Version: solana-cli 2.2.17 (src:e998175d; feat:3073396398, client:Aga
 
 ### 5. Client Generation
 
-Shank spport has been added to generate the client code for the program
+Shank support has been added to generate the client code for the program in ts/rust languages using Codama.
 
-Run this from the root of the repo and chnage permissions for the bash script if needed (chmod +x gen-client.sh)
+Run this from the root of the repo and change permissions for the bash script if needed (chmod +x gen-client.sh)
 
 ```bash
-./gen-client.sh
+# Generate TypeScript client
+./gen-client.sh typescript
+
+# Generate Rust client
+./gen-client.sh rust
+
 ```
 
-- This will generate the client code in the `client` directory using Metaplex Solita library
-  - Idl is generated and stored in the `client/idl` directory
-  - Generated code structure [client](client/src/generated/):
+- This will generate the client code in the `client` directory using Codama library
+- Idl is generated and stored in the `client/idl` directory
+- Generated code structure:
+  - TypeScript: [client/ts/generated](client/ts/generated)
+  - Rust: [client/rust/generated](client/rust/generated)
+  - Each contains:
     - accounts - all the accounts are defined here
     - instructions - all the instructions are defined here
     - types - all the types are defined here
