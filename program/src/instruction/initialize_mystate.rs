@@ -69,10 +69,12 @@ pub fn process_initialize_state_v1(accounts: &[AccountInfo], data: &[u8]) -> Pro
     if derived_my_state_pda.ne(state_acc.key()) {
         return Err(ProgramError::InvalidAccountOwner);
     }
+
     // log!("ix data owner: {}", &ix_data.owner);
     // log!("payer: {}", payer_acc.key());
     let bump_binding = [bump];
     //Signer Seeds
+    //  &[&[&[u8]]]
     let signer_seeds = [
         Seed::from(MyStateV1::SEED.as_bytes()),
         Seed::from(&ix_data.owner),

@@ -64,7 +64,7 @@ impl Initialized for MyStateV2 {
 }
 
 impl MyStateV1 {
-    pub const SEED: &'static str = "mystatev2";
+    pub const SEED: &'static str = "mystate";
 
     pub fn validate_pda(bump: u8, pda: &Pubkey, owner: &Pubkey) -> Result<(), ProgramError> {
         let seeds = &[Self::SEED.as_bytes(), owner];
@@ -104,7 +104,7 @@ impl MyStateV1 {
 }
 
 impl MyStateV2 {
-    pub const SEED: &'static str = "mystate";
+    pub const SEED: &'static str = "mystatev2";
 
     //How to work without involving Enum (v1)
     pub fn get_state(&self) -> State {
